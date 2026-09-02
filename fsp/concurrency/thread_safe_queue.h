@@ -1,0 +1,9 @@
+#ifndef CONCURRENCY_THREAD_SAFE_QUEUE_H
+#define CONCURRENCY_THREAD_SAFE_QUEUE_H
+
+namespace fsp::cy
+{
+    
+}
+
+#endif // CONCURRENCY_THREAD_SAFE_QUEUE_H

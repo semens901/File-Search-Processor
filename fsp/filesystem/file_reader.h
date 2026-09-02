@@ -1,0 +1,9 @@
+#ifndef FILESYSTEM_FILE_READER_H
+#define FILESYSTEM_FILE_READER_H
+
+namespace fsp::fs
+{
+
+}
+
+#endif // FILESYSTEM_FILE_READER_H
