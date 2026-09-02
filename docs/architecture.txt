@@ -1,0 +1,427 @@
+# FSP — File Search Processor
+
+# РУССКАЯ ВЕРСИЯ
+
+Назначение:
+Многопоточная CLI-утилита под Linux для поиска заданного текста
+в файлах файловой системы.
+
+Язык:
+C++20
+
+Платформа:
+Linux
+
+Система сборки:
+CMake
+
+Тестирование:
+Catch2
+
+# СТРУКТУРА ПРОЕКТА
+
+File-Search-Processor/
+│
+├── CMakeLists.txt
+│   Главный файл конфигурации CMake.
+│   Настройка проекта, параметров компилятора, targets
+│   и сборки тестов.
+│
+├── README.md
+│   Основная документация проекта.
+│   Описание возможностей, сборки и использования FSP.
+│
+├── fsp/
+│   Основной исходный код проекта.
+│
+│   ├── cli/
+│   │   Работа с интерфейсом командной строки.
+│   │   - Парсинг аргументов
+│   │   - Проверка параметров
+│   │   - Формирование конфигурации приложения
+│   │
+│   ├── filesystem/
+│   │   Работа с файловой системой Linux.
+│   │   - Рекурсивный обход директорий
+│   │   - Поиск подходящих файлов
+│   │   - Проверка типа файлов
+│   │   - Открытие и чтение файлов
+│   │
+│   ├── search/
+│   │   Поисковый движок FSP.
+│   │   - Поиск заданной строки
+│   │   - Обработка содержимого файлов
+│   │   - Формирование результатов поиска
+│   │
+│   ├── concurrency/
+│   │   Многопоточная инфраструктура проекта.
+│   │   - Thread pool
+│   │   - Thread-safe queue
+│   │   - Producer/Consumer
+│   │   - Синхронизация потоков
+│   │   - Управление завершением потоков
+│   │
+│   └── statistics/
+│       Сбор статистики работы программы.
+│       - Количество обработанных файлов
+│       - Количество обработанных строк
+│       - Количество найденных совпадений
+│       - Информация о worker-потоках
+│       - Время выполнения
+│
+├── tests/
+│   Тесты проекта.
+│
+│   ├── unit/
+│   │   Unit-тесты отдельных компонентов.
+│
+├── benchmarks/
+│   Бенчмарки и эксперименты с производительностью.
+│   - Single-thread vs multi-thread
+│   - Разное количество worker-потоков
+│   - Сравнение различных реализаций
+│
+└── docs/
+Дополнительная техническая документация.
+- Архитектура
+- Concurrency
+- Design decisions
+- Результаты экспериментов
+- Performance analysis
+
+# ОСНОВНАЯ АРХИТЕКТУРА
+
+```
+                     FSP
+                      │
+                      ▼
+                ┌───────────┐
+                │    CLI    │
+                └─────┬─────┘
+                      │
+                   Config
+                      │
+                      ▼
+             ┌─────────────────┐
+             │   File System   │
+             │                 │
+             │ Directory       │
+             │ Scanner         │
+             └────────┬────────┘
+                      │
+                    Tasks
+                      │
+                      ▼
+             ┌─────────────────┐
+             │   Concurrency   │
+             │                 │
+             │   Thread Pool   │
+             │       │         │
+             │   ┌───┼───┐     │
+             │   ▼   ▼   ▼     │
+             │  W1  W2  W3 ... │
+             └───┬───┬───┬─────┘
+                 │   │   │
+                 ▼   ▼   ▼
+             ┌─────────────────┐
+             │     Search      │
+             │                 │
+             │  Search Engine  │
+             └────────┬────────┘
+                      │
+                   Results
+                      │
+                      ▼
+             ┌─────────────────┐
+             │   Statistics    │
+             └─────────────────┘
+```
+
+# ОСНОВНАЯ МОДЕЛЬ МНОГОПОТОЧНОСТИ
+
+Producer:
+Directory Scanner
+
+Task Queue:
+Потокобезопасная очередь, содержащая задачи
+обработки файлов.
+
+Consumers:
+Worker-потоки из Thread Pool.
+
+Worker:
+Получает задачу
+↓
+Читает файл
+↓
+Выполняет поиск pattern
+↓
+Формирует результат
+↓
+Обновляет статистику
+
+# MVP
+
+Команда:
+
+```
+fsp <pattern> <path>
+```
+
+Пример:
+
+```
+fsp "ERROR" ./logs
+```
+
+С указанием количества потоков:
+
+```
+fsp "ERROR" ./logs --threads 8
+```
+
+# ТРЕБОВАНИЯ MVP
+
+1. Рекурсивный обход директорий.
+2. Обработка обычных файлов.
+3. Поиск заданной строки.
+4. Использование нескольких worker-потоков.
+5. Потокобезопасная очередь задач.
+6. Реализация модели Producer/Consumer.
+7. Настраиваемое количество worker-потоков.
+8. Вывод результатов поиска.
+9. Обработка ошибок файловой системы.
+10. Корректное завершение потоков.
+11. Unit-тесты.
+12. Integration-тесты.
+
+# ПЛАНИРУЕМЫЕ РАСШИРЕНИЯ
+
+* Bounded task queue.
+* Backpressure.
+* Graceful shutdown.
+* Cancellation через Ctrl+C.
+* Atomic/thread-local statistics.
+* Упорядоченный вывод результатов.
+* Case-insensitive search.
+* Фильтрация по расширению файла.
+* Определение binary-файлов.
+* Обработка файлов через mmap.
+* Эксперименты с lock-free queue.
+* Performance benchmarks.
+* Stress testing.
+
+# ================================================================
+
+# FSP — File Search Processor
+
+# ENGLISH VERSION
+
+Purpose:
+A multithreaded Linux CLI utility for searching for a specified
+text pattern in files across the filesystem.
+
+Language:
+C++20
+
+Platform:
+Linux
+
+Build system:
+CMake
+
+Testing:
+Catch2
+
+# PROJECT STRUCTURE
+
+File-Search-Processor/
+│
+├── CMakeLists.txt
+│   Main CMake configuration file.
+│   Configures the project, compiler settings, targets,
+│   and test builds.
+│
+├── README.md
+│   Main project documentation.
+│   Contains information about FSP features, building,
+│   and usage.
+│
+├── fsp/
+│   Main project source code.
+│
+│   ├── cli/
+│   │   Command-line interface.
+│   │   - Argument parsing
+│   │   - Argument validation
+│   │   - Application configuration
+│   │
+│   ├── filesystem/
+│   │   Filesystem-related functionality.
+│   │   - Recursive directory traversal
+│   │   - File discovery
+│   │   - File type checking
+│   │   - File opening and reading
+│   │
+│   ├── search/
+│   │   FSP search engine.
+│   │   - Pattern searching
+│   │   - File content processing
+│   │   - Search result generation
+│   │
+│   ├── concurrency/
+│   │   Multithreading infrastructure.
+│   │   - Thread pool
+│   │   - Thread-safe queue
+│   │   - Producer/Consumer model
+│   │   - Thread synchronization
+│   │   - Thread shutdown management
+│   │
+│   └── statistics/
+│       Runtime statistics collection.
+│       - Number of processed files
+│       - Number of processed lines
+│       - Number of matches found
+│       - Worker thread information
+│       - Execution time
+│
+├── tests/
+│   Project tests.
+│
+│   ├── unit/
+│   │   Unit tests for individual components.
+│
+├── benchmarks/
+│   Performance benchmarks and experiments.
+│   - Single-thread vs multi-thread
+│   - Different numbers of worker threads
+│   - Comparison of different implementations
+│
+└── docs/
+Additional technical documentation.
+- Architecture
+- Concurrency
+- Design decisions
+- Experiment results
+- Performance analysis
+
+# MAIN ARCHITECTURE
+
+```
+                     FSP
+                      │
+                      ▼
+                ┌───────────┐
+                │    CLI    │
+                └─────┬─────┘
+                      │
+                   Config
+                      │
+                      ▼
+             ┌─────────────────┐
+             │   File System   │
+             │                 │
+             │ Directory       │
+             │ Scanner         │
+             └────────┬────────┘
+                      │
+                    Tasks
+                      │
+                      ▼
+             ┌─────────────────┐
+             │   Concurrency   │
+             │                 │
+             │   Thread Pool   │
+             │       │         │
+             │   ┌───┼───┐     │
+             │   ▼   ▼   ▼     │
+             │  W1  W2  W3 ... │
+             └───┬───┬───┬─────┘
+                 │   │   │
+                 ▼   ▼   ▼
+             ┌─────────────────┐
+             │     Search      │
+             │                 │
+             │  Search Engine  │
+             └────────┬────────┘
+                      │
+                   Results
+                      │
+                      ▼
+             ┌─────────────────┐
+             │   Statistics    │
+             └─────────────────┘
+```
+
+# CORE CONCURRENCY MODEL
+
+Producer:
+Directory Scanner
+
+Task Queue:
+A thread-safe queue containing file processing tasks.
+
+Consumers:
+Worker threads from the Thread Pool.
+
+Worker:
+Receives a task
+↓
+Reads the file
+↓
+Searches for the specified pattern
+↓
+Produces a search result
+↓
+Updates statistics
+
+# MVP
+
+Command:
+
+```
+fsp <pattern> <path>
+```
+
+Example:
+
+```
+fsp "ERROR" ./logs
+```
+
+Specify the number of worker threads:
+
+```
+fsp "ERROR" ./logs --threads 8
+```
+
+# MVP REQUIREMENTS
+
+1. Recursive directory traversal.
+2. Processing of regular files.
+3. Searching for a specified text pattern.
+4. Multiple worker threads.
+5. Thread-safe task queue.
+6. Producer/Consumer model.
+7. Configurable number of worker threads.
+8. Search result output.
+9. Filesystem error handling.
+10. Correct thread shutdown.
+11. Unit tests.
+12. Integration tests.
+
+# PLANNED EXTENSIONS
+
+* Bounded task queue.
+* Backpressure.
+* Graceful shutdown.
+* Cancellation via Ctrl+C.
+* Atomic/thread-local statistics.
+* Ordered output.
+* Case-insensitive search.
+* File extension filtering.
+* Binary file detection.
+* mmap-based file processing.
+* Lock-free queue experiments.
+* Performance benchmarks.
+* Stress testing.

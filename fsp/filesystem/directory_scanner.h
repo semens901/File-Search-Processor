@@ -1,0 +1,9 @@
+#ifndef FILESYSTEM_DIRECTORY_SCANNER_H
+#define FILESYSTEM_DIRECTORY_SCANNER_H
+
+namespace fsp::fs
+{
+    
+}
+
+#endif // FILESYSTEM_DIRECTORY_SCANNER_H
