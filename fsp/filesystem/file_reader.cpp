@@ -1,11 +1,12 @@
 #include "file_reader.h"
 
 fsp::fs::FileReader::FileReader(std::string file_name)
-: in(file_name)
+: in(file_name), file_name(file_name)
 {
-    this->file_name = file_name;
     if(in.is_open())
         status = true;
+    else
+        std::cerr << "Failed to open file: " << file_name << std::endl;
 }
 
 fsp::fs::FileReader::~FileReader()
@@ -23,53 +24,21 @@ bool fsp::fs::FileReader::open(std::string file_name)
         status = true;
         return status;
     }
+    std::cerr << "Failed to open file: " << file_name << std::endl;
     return false;
 }
 
-fsp::fs::LogEntry fsp::fs::FileReader::search_text(std::string text)
-{
-    fsp::fs::LogEntry log_entry;
-    if (!is_valid())
-    {
-        std::cerr << "FileReader is not valid. Please open a file first." << std::endl;
-        return fsp::fs::LogEntry();
-    }
-
-    std::string line;
-    
-    std::streampos pos;
-
-    std::transform(text.begin(), 
-        text.end(), 
-        text.begin(), 
-        [](unsigned char c) {
-            return std::tolower(c);
-        });
-
-    while (std::getline(in, line)) 
-    {
-        pos = in.tellg();
-
-        std::transform(line.begin(), 
-        line.end(), 
-        line.begin(), 
-        [](unsigned char c) {
-            return std::tolower(c);
-        });
-
-        auto it = line.find(text);
-        if(it != std::string::npos)
-            break;
-    }
-
-    log_entry.line_number = pos;
-    log_entry.text = line;
-    log_entry.file_name = this->file_name;
-
-    return log_entry;
-}
-
-bool fsp::fs::FileReader::is_valid()
+bool fsp::fs::FileReader::is_valid() const
 {
     return status;
+}
+
+std::ifstream& fsp::fs::FileReader::get_stream() const
+{
+    return in;
+}
+
+std::string fsp::fs::FileReader::get_file_name() const
+{
+    return file_name;
 }

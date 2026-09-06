@@ -4,29 +4,31 @@
 #include <fstream>
 #include <algorithm>
 #include <iostream>
-
-#include "log_entry.h"
+#include <memory>
 
 namespace fsp::fs
 {
     class FileReader
     {
     public:
+        FileReader() = default;
         FileReader(std::string file_name);
 
         ~FileReader();
 
         bool open(std::string file_name);
-        
-        LogEntry search_text(std::string text);
 
-        bool is_valid();
+        bool is_valid() const;
+
+        std::ifstream& get_stream() const;
+
+        std::string get_file_name() const;
 
 
     private:
-        std::ifstream in;
+        mutable std::ifstream in;
         std::string file_name;
-        bool status{false};
+        mutable bool status{false};
     };
 }
 

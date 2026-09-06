@@ -1,3 +1,5 @@
+#ifndef FSP_FILESYSTEM_LOG_ENTRY_H
+#define FSP_FILESYSTEM_LOG_ENTRY_H
 #include <string>
 
 namespace fsp::fs
@@ -13,3 +15,4 @@ namespace fsp::fs
         std::string file_name;
     };
 }
+#endif // FSP_FILESYSTEM_LOG_ENTRY_H
