@@ -14,6 +14,7 @@ FetchContent_MakeAvailable(Catch2)
 
 file(GLOB FSP_TEST_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/unit/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
 )
 
 add_executable(fsp_unit_tests
