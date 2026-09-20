@@ -5,6 +5,7 @@
 
 int main()
 {
+    /*
     fsp::sh::SearchLineEngine search_engine;
     fsp::fs::FileReader file_reader("test.txt");
     auto search = search_engine.process_search("He checked the wooden shed, the mailbox, and even his old toy box,", file_reader);
@@ -12,6 +13,6 @@ int main()
     std::cout << "Line Number: " << search.line_number << std::endl;
     std::cout << "Text: " << search.text << std::endl;  
     std::cout << "File Name: " << search.file_name << std::endl;
-
+    */
     return 0;
 }
