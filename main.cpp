@@ -1,18 +1,31 @@
-#include <iostream>
+#include <string>
+#include <thread>
 
-#include "fsp/search/search_line_engine.h"
-#include "fsp/filesystem/log_entry.h"
+#include <spdlog/spdlog.h>
+
+#include "fsp/services/file_processing_manager.h"
 
 int main()
 {
-    /*
-    fsp::sh::SearchLineEngine search_engine;
-    fsp::fs::FileReader file_reader("test.txt");
-    auto search = search_engine.process_search("He checked the wooden shed, the mailbox, and even his old toy box,", file_reader);
+    spdlog::set_level(spdlog::level::debug);
+    spdlog::set_pattern("[%H:%M:%S %z] [%^%l%$] %v");
 
-    std::cout << "Line Number: " << search.line_number << std::endl;
-    std::cout << "Text: " << search.text << std::endl;  
-    std::cout << "File Name: " << search.file_name << std::endl;
-    */
+    spdlog::info("FSP demo: FileProcessingManager stub");
+
+    const std::string pattern = "other text";
+    const std::string root_path = "demo_root";
+    const std::size_t thread_count = std::thread::hardware_concurrency();
+
+    fsp::sv::FileProcessingManager manager(pattern, root_path, thread_count);
+
+    const auto result = manager.run();
+
+    spdlog::info("Search result:");
+    spdlog::info("line_number = {}", result.line_number);
+    spdlog::info("text = {}", result.text);
+    spdlog::info("file_name = {}", result.file_name);
+
+    manager.stop();
+    spdlog::info("FileProcessingManager mock execution completed.");
     return 0;
 }

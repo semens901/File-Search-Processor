@@ -10,6 +10,27 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+include(FetchContent)
+
+FetchContent_Declare(
+    bs_thread_pool
+    GIT_REPOSITORY https://github.com/bshoshany/thread-pool.git
+    GIT_TAG v5.1.0
+)
+
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG v1.14.1
+)
+
+FetchContent_MakeAvailable(bs_thread_pool spdlog)
+
+add_library(BS::thread_pool INTERFACE IMPORTED)
+set_target_properties(BS::thread_pool PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${bs_thread_pool_SOURCE_DIR}/include"
+)
+
 # ---------------------------------------------------------------------------
 # Compiler warnings
 # ---------------------------------------------------------------------------
@@ -42,6 +63,12 @@ add_library(fsp_lib
 target_include_directories(fsp_lib
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(fsp_lib
+    PUBLIC
+        BS::thread_pool
+        spdlog
 )
 
 # ---------------------------------------------------------------------------
