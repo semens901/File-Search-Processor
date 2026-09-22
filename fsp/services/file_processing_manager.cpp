@@ -1,7 +1,9 @@
 #include "file_processing_manager.h"
 
+#include <atomic>
 #include <filesystem>
 #include <future>
+#include <thread>
 #include <utility>
 #include <vector>
 
@@ -22,7 +24,13 @@ namespace fsp::sv
 
     fsp::fs::LogEntry FileProcessingManager::run()
     {
-        filesSearch();
+        std::atomic<bool> scanning_finished{false};
+        std::thread producer([this, &scanning_finished]() {
+            directoryScanner.scan(root_path_, queue_);
+            scanning_finished = true;
+            queue_.stop();
+        });
+        producer.detach();
 
         std::vector<std::future<fsp::fs::LogEntry>> futures;
         futures.reserve(thread_count_);
@@ -30,7 +38,7 @@ namespace fsp::sv
         fsp::fs::LogEntry last_result{};
         last_result.line_number = -1;
 
-        while (!queue_.empty())
+        while (true)
         {
             while (futures.size() < thread_count_ && !queue_.empty())
             {
@@ -52,27 +60,58 @@ namespace fsp::sv
                 }));
             }
 
-            for (auto& future : futures)
+            if (futures.empty())
             {
-                const auto result = future.get();
-                last_result = result;
+                if (scanning_finished && queue_.empty())
+                {
+                    break;
+                }
 
-                if (result.line_number >= 0)
+                std::filesystem::path file_path;
+                try
                 {
-                    spdlog::info("Match found in file: {}", result.file_name);
-                    spdlog::info("Line number: {}", result.line_number);
-                    spdlog::info("Line text: {}", result.text);
+                    file_path = queue_.pop();
                 }
-                else
+                catch (const std::runtime_error&)
                 {
-                    spdlog::warn("No match found in: {}", result.file_name);
+                    break;
                 }
+
+                futures.emplace_back(thread_pool_.submit_task([this, file_path]() {
+                    fsp::fs::FileReader file_reader(file_path.string());
+                    if (!file_reader.is_valid())
+                    {
+                        spdlog::error("Failed to open file: {}", file_path.string());
+                        return fsp::fs::LogEntry{-1, "", file_path.string()};
+                    }
+
+                    return fileScanner.search(pattern_, file_reader);
+                }));
+                continue;
             }
 
-            futures.clear();
+            auto result = futures.front().get();
+            futures.erase(futures.begin());
+            last_result = result;
+
+            if (result.line_number >= 0)
+            {
+                spdlog::info("Match found in file: {}", result.file_name);
+                spdlog::info("Line number: {}", result.line_number);
+                spdlog::info("Line text: {}", result.text);
+            }
+            else
+            {
+                spdlog::warn("No match found in: {}", result.file_name);
+            }
+
+            if (scanning_finished && queue_.empty() && futures.empty())
+            {
+                break;
+            }
         }
 
-        thread_pool_.wait();
+        stop();
         return last_result;
     }
 
@@ -83,10 +122,10 @@ namespace fsp::sv
 
     void FileProcessingManager::filesSearch()
     {
-        std::vector<std::filesystem::path> files = directoryScanner.scan(root_path_);
-        for (const auto& file : files)
-        {
-            queue_.push(file);
-        }
+        std::thread producer([this]() {
+            directoryScanner.scan(root_path_, queue_);
+            queue_.stop();
+        });
+        producer.detach();
     }
 }

@@ -9,7 +9,8 @@ namespace fsp::ss
     {
     public:
         ~DirectoryScanner() override;
-        std::vector<std::filesystem::path> scan(const std::filesystem::path& root_path) const override;
+        void scan(const std::filesystem::path& root_path,
+                  fsp::cy::ThreadSafeQueue<std::filesystem::path>& queue) const override;
     };
 }
 

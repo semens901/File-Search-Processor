@@ -25,7 +25,6 @@ int main()
     spdlog::info("text = {}", result.text);
     spdlog::info("file_name = {}", result.file_name);
 
-    manager.stop();
     spdlog::info("FileProcessingManager mock execution completed.");
     return 0;
 }

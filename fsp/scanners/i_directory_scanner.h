@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "../concurrency/thread_safe_queue.h"
+
 namespace fsp::ss
 {
     class IDirectoryScanner
@@ -12,7 +14,8 @@ namespace fsp::ss
     public:
         virtual ~IDirectoryScanner() = default;
 
-        virtual std::vector<std::filesystem::path> scan(const std::filesystem::path& root_path) const = 0;
+        virtual void scan(const std::filesystem::path& root_path,
+                          fsp::cy::ThreadSafeQueue<std::filesystem::path>& queue) const = 0;
     };
 }
 
