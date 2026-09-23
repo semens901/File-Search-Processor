@@ -9,7 +9,7 @@ namespace fsp::ss
     class FileScanner : public IFileScanner
     {
     public:
-        FileScanner(std::string pattern);
+        FileScanner();
         ~FileScanner() override;
         fsp::fs::LogEntry search(const std::string& pattern, fsp::fs::FileReader& file_reader) override;
     private:

@@ -1,7 +1,6 @@
 #include "file_scanner.h"
 
-fsp::ss::FileScanner::FileScanner(std::string pattern)
-    : pattern_(std::move(pattern)), file_reader()
+fsp::ss::FileScanner::FileScanner()
 {
 }
 

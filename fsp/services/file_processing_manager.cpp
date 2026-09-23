@@ -13,7 +13,6 @@ namespace fsp::sv
 {
     FileProcessingManager::FileProcessingManager(std::string pattern, std::filesystem::path root_path, std::size_t thread_count)
         : pattern_(std::move(pattern)),
-          fileScanner(pattern_),
           root_path_(std::move(root_path)),
           thread_count_(thread_count),
           thread_pool_(thread_count_)
