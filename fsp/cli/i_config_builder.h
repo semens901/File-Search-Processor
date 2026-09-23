@@ -3,6 +3,9 @@
 
 namespace fsp::cli
 {
+    // IConfigBuilder: abstraction for assembling runtime configuration
+    // from parsed arguments and environment. Implementations can populate
+    // configuration objects used by the application.
     class IConfigBuilder
     {
     public:

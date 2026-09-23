@@ -13,6 +13,9 @@
 
 namespace fsp::sh
 {
+    // SearchLine: concrete implementation of ISearch that searches a file
+    // line-by-line for a substring. Matching is case-insensitive and the
+    // returned LogEntry contains the first match found.
     class SearchLine : public ISearch
     {
     public:

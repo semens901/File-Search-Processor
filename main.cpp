@@ -5,6 +5,11 @@
 
 #include "fsp/services/file_processing_manager.h"
 
+#include <chrono>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+
 int main()
 {
     spdlog::set_level(spdlog::level::debug);
@@ -26,5 +31,6 @@ int main()
     spdlog::info("file_name = {}", result.file_name);
 
     spdlog::info("FileProcessingManager mock execution completed.");
+
     return 0;
 }

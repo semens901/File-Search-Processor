@@ -4,6 +4,8 @@
 
 namespace fsp::fs
 {
+        // LogEntry: simple POD describing a single search match. When no match
+        // is found, `line_number` is expected to be -1.
     struct LogEntry 
     {
         LogEntry() = default;

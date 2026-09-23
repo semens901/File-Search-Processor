@@ -5,7 +5,9 @@
 
 namespace fsp::ss
 {
-    
+    // IFileScanner: abstract interface for file-level scanning. Implementations
+    // perform a search for `pattern` inside the provided FileReader and
+    // return a LogEntry describing the (first) match.
     class IFileScanner
     {
     public:

@@ -11,6 +11,13 @@
 
 namespace fsp::sv
 {
+    // Implementation notes:
+    // - A producer thread fills a thread-safe queue with file paths discovered
+    //   by DirectoryScanner.
+    // - A BS::thread_pool is used to schedule file search tasks concurrently.
+    // - The manager collects the first matching LogEntry and returns it.
+    // - `stop()` waits for the pool to finish outstanding tasks.
+
     FileProcessingManager::FileProcessingManager(std::string pattern, std::filesystem::path root_path, std::size_t thread_count)
         : pattern_(std::move(pattern)),
           root_path_(std::move(root_path)),
@@ -91,10 +98,14 @@ namespace fsp::sv
 
             auto result = futures.front().get();
             futures.erase(futures.begin());
-            last_result = result;
 
             if (result.line_number >= 0)
             {
+                if (last_result.line_number < 0)
+                {
+                    last_result = result;
+                }
+
                 spdlog::info("Match found in file: {}", result.file_name);
                 spdlog::info("Line number: {}", result.line_number);
                 spdlog::info("Line text: {}", result.text);

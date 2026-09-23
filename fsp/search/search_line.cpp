@@ -1,5 +1,9 @@
 #include "search_line.h"
 
+// SearchLine::search_text: perform a case-insensitive line search
+// over the provided FileReader. Returns a LogEntry containing the
+// matched line, file name and 1-based line number. If no match is
+// found, `line_number` is set to -1.
 fsp::fs::LogEntry fsp::sh::SearchLine::search_text(std::string text, fsp::fs::FileReader& file_reader)
 {
     if (!file_reader.is_valid())

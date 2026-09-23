@@ -8,6 +8,9 @@
 
 namespace fsp::sh
 {
+    // ISearch: abstract interface for search implementations. Concrete
+    // classes implement `search_text` to scan a FileReader and return a
+    // LogEntry describing a match (or a negative line_number when none).
     class ISearch
     {
     public:

@@ -1,4 +1,6 @@
 #include "thread_safe_queue.h"
 
-// The queue logic is header-only and intentionally kept minimal.
-// This file exists so the project structure matches the repository conventions.
+// ThreadSafeQueue implementation note:
+// The functional implementation lives in the header to allow inlining and
+// easy templating. This translation unit is intentionally empty so that
+// build systems that expect a .cpp file for each module remain satisfied.

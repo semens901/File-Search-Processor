@@ -6,6 +6,9 @@
 
 namespace fsp::ss
 {
+    // FileScanner: concrete IFileScanner that performs file-level searches
+    // by delegating to an underlying search engine. It encapsulates the
+    // engine instance to keep the public interface simple.
     class FileScanner : public IFileScanner
     {
     public:

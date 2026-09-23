@@ -5,6 +5,8 @@
 
 namespace fsp::cli
 {
+    // ConfigBuilder: assemble runtime `Config` from parsed arguments and
+    // environment. Left as a small extension point for future CLI options.
     class ConfigBuilder : public IConfigBuilder
     {
     public:

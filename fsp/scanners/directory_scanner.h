@@ -5,6 +5,9 @@
 
 namespace fsp::ss
 {
+    // DirectoryScanner: concrete implementation of IDirectoryScanner that
+    // recursively enumerates files under a root path and pushes them into
+    // a ThreadSafeQueue for consumers.
     class DirectoryScanner : public IDirectoryScanner
     {
     public:

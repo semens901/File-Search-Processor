@@ -18,6 +18,7 @@ namespace fsp::cy
         ThreadSafeQueue(const ThreadSafeQueue&) = delete;
         ThreadSafeQueue& operator=(const ThreadSafeQueue&) = delete;
 
+        // push: enqueue a value and notify waiting threads
         void push(T value)
         {
             {
@@ -27,6 +28,7 @@ namespace fsp::cy
             condition_.notify_one();
         }
 
+        // try_pop: attempt to dequeue without blocking. Returns false if empty.
         bool try_pop(T& value)
         {
             std::lock_guard<std::mutex> lock(mutex_);
@@ -40,6 +42,8 @@ namespace fsp::cy
             return true;
         }
 
+        // pop: block until a value is available or the queue is stopped.
+        // If the queue is stopped and empty, throws runtime_error.
         T pop()
         {
             std::unique_lock<std::mutex> lock(mutex_);
@@ -55,12 +59,16 @@ namespace fsp::cy
             return value;
         }
 
+        // empty: thread-safe check for emptiness
         bool empty() const
         {
             std::lock_guard<std::mutex> lock(mutex_);
             return queue_.empty();
         }
 
+        // stop: atomically mark the queue stopped and wake waiting threads.
+        // Consumers will receive an exception from `pop()` if the queue is
+        // stopped and empty.
         void stop()
         {
             {

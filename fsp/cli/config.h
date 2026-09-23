@@ -6,6 +6,9 @@
 
 namespace fsp::cli
 {
+    // Config: structure holding runtime options parsed from the command line.
+    // Fields provide defaults so the rest of the program can rely on valid
+    // values even when specific options are omitted.
     struct Config
     {
         std::string pattern;

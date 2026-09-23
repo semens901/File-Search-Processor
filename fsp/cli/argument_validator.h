@@ -5,6 +5,9 @@
 
 namespace fsp::cli
 {
+    // ArgumentValidator: validates previously parsed CLI options. This
+    // class is intentionally minimal for tests and can be extended with
+    // concrete rules if needed.
     class ArgumentValidator : public IArgumentValidator
     {
     public:

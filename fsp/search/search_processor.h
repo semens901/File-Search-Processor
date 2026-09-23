@@ -10,6 +10,10 @@
 
 namespace fsp::sh
 {
+    // SearchProcessor: base class providing a template method `process_search`
+    // which constructs a concrete ISearch via `create_search()` and delegates
+    // the work. Subclasses implement the factory method to supply a concrete
+    // search implementation.
     class SearchProcessor
     {
     public:

@@ -11,7 +11,9 @@
 
 namespace fsp::sh
 {
-
+    // SearchLineEngine: concrete SearchProcessor that creates a
+    // SearchLine for line-based searching. This class acts as a factory
+    // and provides the engine used by FileScanner.
     class SearchLineEngine : public SearchProcessor
     {
     public:

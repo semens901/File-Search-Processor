@@ -1,6 +1,10 @@
 #ifndef FILE_PROCESSING_MANAGER_H
 #define FILE_PROCESSING_MANAGER_H
 
+// FileProcessingManager: orchestrates scanning files under a root path
+// and searching for a text pattern using a thread pool. Exposes a
+// synchronous `run()` method that returns the first found LogEntry.
+
 #include <cstddef>
 #include <string>
 

@@ -5,6 +5,9 @@
 
 namespace fsp::cli
 {
+    // ArgumentParser: concrete parser for CLI arguments. The implementation
+    // is currently a stub; this type exists to satisfy the public API used
+    // by the rest of the application and tests.
     class ArgumentParser : public IArgumentParser
     {
     public:

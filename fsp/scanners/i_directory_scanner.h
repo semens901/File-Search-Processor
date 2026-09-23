@@ -9,6 +9,9 @@
 
 namespace fsp::ss
 {
+    // IDirectoryScanner: interface for components that enumerate file paths
+    // under a root directory. Implementations push discovered file paths into
+    // the provided ThreadSafeQueue for downstream processing.
     class IDirectoryScanner
     {
     public:
