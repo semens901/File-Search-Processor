@@ -12,6 +12,7 @@
 #include "../scanners/directory_scanner.h"
 #include "../concurrency/thread_safe_queue.h"
 #include "BS_thread_pool.hpp"
+#include "fsp/statistics/statistics.h"
 
 namespace fsp::sv
 {

@@ -59,6 +59,7 @@ namespace fsp::sv
                     if (!file_reader.is_valid())
                     {
                         spdlog::error("Failed to open file: {}", file_path.string());
+                        fsp::sc::Statistics::file_error();
                         return fsp::fs::LogEntry{-1, "", file_path.string()};
                     }
 
@@ -88,6 +89,7 @@ namespace fsp::sv
                     if (!file_reader.is_valid())
                     {
                         spdlog::error("Failed to open file: {}", file_path.string());
+                        fsp::sc::Statistics::file_error();
                         return fsp::fs::LogEntry{-1, "", file_path.string()};
                     }
 

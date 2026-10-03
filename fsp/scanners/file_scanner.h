@@ -3,6 +3,7 @@
 
 #include "i_file_scanner.h"
 #include "fsp/search/search_line_engine.h"
+#include "fsp/statistics/statistics.h"
 
 namespace fsp::ss
 {

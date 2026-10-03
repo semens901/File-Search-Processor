@@ -16,6 +16,7 @@ namespace fsp::cli
         std::size_t thread_count{1};
         bool recursive{true};
         bool case_sensitive{false};
+        bool statistics{false};
     };
 }
 

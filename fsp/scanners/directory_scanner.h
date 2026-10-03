@@ -2,6 +2,7 @@
 #define DIRECTORY_SCANNER_H
 
 #include "i_directory_scanner.h"
+#include "fsp/statistics/statistics.h"
 
 namespace fsp::ss
 {

@@ -9,19 +9,67 @@ void fsp::ss::DirectoryScanner::scan(const std::filesystem::path& root_path,
 {
     namespace fs = std::filesystem;
 
-    // Validate root path
-    if (!fs::exists(root_path) || !fs::is_directory(root_path))
+    std::error_code ec;
+
+    if (!fs::exists(root_path, ec) ||
+        !fs::is_directory(root_path, ec))
     {
+        fsp::sc::Statistics::file_error();
+        fsp::sc::Statistics::file_skipped();
         return;
     }
 
-    // Recursively iterate and emit regular files only
-    const auto options = fs::directory_options::skip_permission_denied;
-    for (const auto& entry : fs::recursive_directory_iterator(root_path, options))
+    fsp::sc::Statistics::directory_scanned();
+
+    fs::recursive_directory_iterator it(root_path, {}, ec);
+    const fs::recursive_directory_iterator end;
+
+    while (it != end)
     {
-        if (entry.is_regular_file())
+        if (ec)
         {
-            queue.push(entry.path());
+            fsp::sc::Statistics::file_error();
+            fsp::sc::Statistics::file_skipped();
+            ec.clear();
+
+            it.increment(ec);
+            continue;
         }
+
+        const auto& entry = *it;
+
+        std::error_code entry_ec;
+
+        if (entry.is_directory(entry_ec))
+        {
+            if (!entry_ec)
+            {
+                fsp::sc::Statistics::directory_scanned();
+            }
+            else
+            {
+                fsp::sc::Statistics::file_error();
+                fsp::sc::Statistics::file_skipped();
+            }
+        }
+        else if (entry.is_regular_file(entry_ec))
+        {
+            if (entry_ec)
+            {
+                fsp::sc::Statistics::file_error();
+                fsp::sc::Statistics::file_skipped();
+            }
+            else
+            {
+                queue.push(entry.path());
+            }
+        }
+        else if (entry_ec)
+        {
+            fsp::sc::Statistics::file_error();
+            fsp::sc::Statistics::file_skipped();
+        }
+
+        it.increment(ec);
     }
 }

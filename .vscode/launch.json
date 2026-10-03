@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "FSP (default args)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/fsp",
+      "args": [
+        "-p",
+        "other text",
+        "-r",
+        "demo_root",
+        "-t",
+        "4"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/build",
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}
