@@ -11,13 +11,13 @@
 
 namespace fsp::sv
 {
-    // Implementation notes:
-    // - A producer thread fills a thread-safe queue with file paths discovered
-    //   by DirectoryScanner.
-    // - A BS::thread_pool is used to schedule file search tasks concurrently.
-    // - The manager collects the first matching LogEntry and returns it.
-    // - `stop()` waits for the pool to finish outstanding tasks.
+    // The manager coordinates two independent activities: discovering files in the
+    // target tree and processing those files in parallel with a bounded worker pool.
+    // A producer thread keeps filling a queue, while the pool consumes items and
+    // reports whether a matching line was found.
 
+    // Initializes the processing pipeline with the search pattern, root directory,
+    // and the maximum number of worker threads allowed to run concurrently.
     FileProcessingManager::FileProcessingManager(std::string pattern, std::filesystem::path root_path, std::size_t thread_count)
         : pattern_(std::move(pattern)),
           root_path_(std::move(root_path)),
@@ -28,9 +28,15 @@ namespace fsp::sv
 
     FileProcessingManager::~FileProcessingManager() = default;
 
+    // Runs the full search lifecycle and returns the first successful match found.
+    // The loop keeps the producer and consumer sides balanced until the scan is done
+    // and all queued tasks have been processed.
     fsp::fs::LogEntry FileProcessingManager::run()
     {
+        // Tracks whether the directory scanner has completed its traversal.
         std::atomic<bool> scanning_finished{false};
+
+        // Producer thread: discover files and push them into the queue for later processing.
         std::thread producer([this, &scanning_finished]() {
             directoryScanner.scan(root_path_, queue_);
             scanning_finished = true;
@@ -46,6 +52,7 @@ namespace fsp::sv
 
         while (true)
         {
+            // Fill the worker pool while there are queued files and we have available slots.
             while (futures.size() < thread_count_ && !queue_.empty())
             {
                 std::filesystem::path file_path;
@@ -67,6 +74,8 @@ namespace fsp::sv
                 }));
             }
 
+            // If the pool is empty but work may still be coming from the producer,
+            // wait for the next item from the queue and schedule it as a task.
             if (futures.empty())
             {
                 if (scanning_finished && queue_.empty())
@@ -98,9 +107,11 @@ namespace fsp::sv
                 continue;
             }
 
+            // Wait for the next task to finish and consume its result before continuing.
             auto result = futures.front().get();
             futures.erase(futures.begin());
 
+            // Preserve the first successful match, while still continuing to process other files.
             if (result.line_number >= 0)
             {
                 if (last_result.line_number < 0)
@@ -117,6 +128,8 @@ namespace fsp::sv
                 spdlog::warn("No match found in: {}", result.file_name);
             }
 
+            // The loop ends only after scanning is complete, the queue is drained,
+            // and all in-flight tasks have been resolved.
             if (scanning_finished && queue_.empty() && futures.empty())
             {
                 break;
@@ -127,11 +140,14 @@ namespace fsp::sv
         return last_result;
     }
 
+    // Waits until all queued file-processing tasks in the thread pool are complete.
     void FileProcessingManager::stop()
     {
         thread_pool_.wait();
     }
 
+    // Legacy helper entry point kept for compatibility with the project structure.
+    // It scans the root directory and queues matching work for consumers.
     void FileProcessingManager::filesSearch()
     {
         std::thread producer([this]() {

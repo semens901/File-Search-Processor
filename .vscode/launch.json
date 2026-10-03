@@ -12,7 +12,8 @@
         "-r",
         "demo_root",
         "-t",
-        "4"
+        "4",
+        "-s"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}/build",

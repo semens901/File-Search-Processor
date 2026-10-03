@@ -91,6 +91,22 @@ TEST_CASE("ArgumentParser handles help flags", "[cli][unit]")
     REQUIRE(fsp::cli::ArgumentParser::help_requested());
 }
 
+TEST_CASE("ArgumentParser handles stats display flag", "[cli][unit]")
+{
+    char program[] = "fsp";
+    char pattern[] = "needle";
+    char root[] = "demo_root";
+    char* argv[] = {program, "-p", pattern, "-r", root, "-s"};
+
+    fsp::cli::ArgumentParser parser;
+    parser.parse(6, argv);
+
+    const auto& config = fsp::cli::ArgumentParser::config();
+    REQUIRE(config.pattern == "needle");
+    REQUIRE(config.root_path == "demo_root");
+    REQUIRE(config.statistics);
+}
+
 TEST_CASE("ArgumentParser handles long help flag", "[cli][unit]")
 {
     char program[] = "fsp";

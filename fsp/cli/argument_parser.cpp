@@ -80,6 +80,12 @@ namespace fsp::cli
                     continue;
                 }
 
+                if (current == "--statistics" || current == "--stats")
+                {
+                    normalized.push_back("-s");
+                    continue;
+                }
+
                 if (current.rfind("--pattern=", 0) == 0)
                 {
                     normalized.push_back("-p");
