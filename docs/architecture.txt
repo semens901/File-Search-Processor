@@ -180,6 +180,17 @@ fsp "ERROR" ./logs
 fsp "ERROR" ./logs --threads 8
 ```
 
+# Рекурсивный флаг
+
+Флаг `-R` (или `--recursive`) включает рекурсивный обход директорий. Это флаг без значения — его можно использовать отдельно или вместе с другими флагами, например с `--threads` или `--statistics`.
+
+Примеры:
+
+```
+fsp -p "ERROR" -r ./logs -R
+fsp -p "ERROR" -r ./logs -R -s
+```
+
 # ТРЕБОВАНИЯ MVP
 
 1. Рекурсивный обход директорий.
@@ -393,6 +404,17 @@ Specify the number of worker threads:
 
 ```
 fsp "ERROR" ./logs --threads 8
+```
+
+Recursive flag
+
+The `-R` (or `--recursive`) flag enables recursive directory traversal. It's a boolean flag (no value) — you can use it alone or together with other flags such as `--threads` or `--statistics`.
+
+Examples:
+
+```
+./build/fsp -p "ERROR" -r ./logs -R
+./build/fsp -p "ERROR" -r ./logs -R -s
 ```
 
 # MVP REQUIREMENTS

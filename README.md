@@ -89,6 +89,18 @@ Search using a custom thread count and enable statistics output:
 ./build/fsp -p needle -r demo_root -t 4 -s
 ```
 
+Search recursively (flag `-R`) without statistics:
+
+```bash
+./build/fsp -p needle -r demo_root -R
+```
+
+Search recursively with statistics:
+
+```bash
+./build/fsp -p needle -r demo_root -R -s
+```
+
 Search using positional arguments:
 
 ```bash
