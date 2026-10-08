@@ -16,7 +16,7 @@ fsp::fs::LogEntry fsp::ss::FileScanner::search(const std::string &pattern, fsp::
     fsp::sc::Statistics::file_scanned();
 
     auto res = search_engine.process_search(pattern, file_reader);
-    if(res.line_number >=0)
+    if(res.line_number >= 0)
     {
         // A positive line number means the file contains a match.
         fsp::sc::Statistics::file_matched();

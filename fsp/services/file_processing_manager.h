@@ -19,7 +19,13 @@ namespace fsp::sv
     class FileProcessingManager
     {
     public:
-        FileProcessingManager(std::string pattern, std::filesystem::path root_path, std::size_t thread_count);
+        FileProcessingManager(
+            std::string pattern, 
+            std::filesystem::path root_path, 
+            std::size_t thread_count,
+            bool recursive
+        );
+
         ~FileProcessingManager();
 
         fsp::fs::LogEntry run();
@@ -34,6 +40,7 @@ namespace fsp::sv
         fsp::ss::DirectoryScanner directoryScanner;
         std::filesystem::path root_path_;
         std::size_t thread_count_;
+        bool recursive_;
         BS::thread_pool<> thread_pool_;
         fsp::cy::ThreadSafeQueue<std::filesystem::path> queue_;
     };

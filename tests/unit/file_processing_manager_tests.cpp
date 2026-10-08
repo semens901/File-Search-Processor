@@ -38,7 +38,7 @@ static std::pair<fsp::fs::LogEntry, std::chrono::milliseconds> run_manager(const
                                                                         std::size_t thread_count)
 {
     const auto start = std::chrono::steady_clock::now();
-    fsp::sv::FileProcessingManager manager("needle_here_in_central_file", root, thread_count);
+    fsp::sv::FileProcessingManager manager("needle_here_in_central_file", root, thread_count, true);
     const auto result = manager.run();
     const auto end = std::chrono::steady_clock::now();
 

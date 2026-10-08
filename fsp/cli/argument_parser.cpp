@@ -31,7 +31,7 @@ namespace fsp::cli
             return static_cast<std::size_t>(parsed);
         }
 
-        std::vector<std::string> normalize_arguments(int argc, char* argv[])
+        std::vector<std::string> normalize_arguments(int argc, const char* argv[])
         {
             std::vector<std::string> normalized;
             normalized.reserve(static_cast<std::size_t>(argc));
@@ -100,6 +100,18 @@ namespace fsp::cli
                     continue;
                 }
 
+                if (current == "--recursive")
+                {
+                    normalized.push_back("-R");
+                    continue;
+                }
+
+                if (current.rfind("--recursive=", 0) == 0)
+                {
+                    normalized.push_back("-R");
+                    continue;
+                }
+
                 if (current.rfind("--threads=", 0) == 0)
                 {
                     normalized.push_back("-t");
@@ -124,7 +136,7 @@ namespace fsp::cli
         return help_requested_;
     }
 
-    void ArgumentParser::parse(int argc, char* argv[])
+    void ArgumentParser::parse(int argc, const char* argv[])
     {
         config_ = Config{};
         help_requested_ = false;
@@ -151,8 +163,8 @@ namespace fsp::cli
 
         int option = 0;
         while ((option = getopt(static_cast<int>(normalized_argv.size()),
-                                normalized_argv.data(),
-                                ":hp:r:t:s")) != -1)
+                    normalized_argv.data(),
+                    ":hp:r:t:sR")) != -1)
         {
             switch (option)
             {
@@ -164,6 +176,9 @@ namespace fsp::cli
                     break;
                 case 'r':
                     config_.root_path = optarg;
+                    break;
+                case 'R':
+                    config_.recursive = true;
                     break;
                 case 't':
                     config_.thread_count = parse_thread_count(optarg);

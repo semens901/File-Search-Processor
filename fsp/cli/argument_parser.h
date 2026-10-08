@@ -9,7 +9,7 @@ namespace fsp::cli
     class ArgumentParser : public IArgumentParser
     {
     public:
-        void parse(int argc, char* argv[]) override;
+        void parse(int argc, const char* argv[]) override;
 
         static const Config& config();
         static bool help_requested();

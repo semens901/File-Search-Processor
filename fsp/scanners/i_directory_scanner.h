@@ -17,8 +17,10 @@ namespace fsp::ss
     public:
         virtual ~IDirectoryScanner() = default;
 
-        virtual void scan(const std::filesystem::path& root_path,
-                          fsp::cy::ThreadSafeQueue<std::filesystem::path>& queue) const = 0;
+        virtual void scan(
+            const std::filesystem::path& root_path,
+            fsp::cy::ThreadSafeQueue<std::filesystem::path>& queue,
+            const bool& recursive) const = 0;
     };
 }
 

@@ -10,7 +10,7 @@ namespace fsp::cli
     public:
         virtual ~IArgumentParser() = default;
 
-        virtual void parse(int argc, char* argv[]) = 0;
+        virtual void parse(int argc, const char* argv[]) = 0;
     };
 }
 

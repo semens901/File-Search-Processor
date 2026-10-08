@@ -18,13 +18,18 @@ namespace fsp::sv
 
     // Initializes the processing pipeline with the search pattern, root directory,
     // and the maximum number of worker threads allowed to run concurrently.
-    FileProcessingManager::FileProcessingManager(std::string pattern, std::filesystem::path root_path, std::size_t thread_count)
-        : pattern_(std::move(pattern)),
-          root_path_(std::move(root_path)),
-          thread_count_(thread_count),
-          thread_pool_(thread_count_)
-    {
-    }
+        FileProcessingManager::FileProcessingManager(
+                std::string pattern, 
+                std::filesystem::path root_path, 
+                std::size_t thread_count, 
+                bool recursive)
+                :   pattern_(std::move(pattern)),
+                    root_path_(std::move(root_path)),
+                    thread_count_(thread_count),
+                    recursive_(recursive),
+                    thread_pool_(thread_count_)
+        {
+        }
 
     FileProcessingManager::~FileProcessingManager() = default;
 
@@ -38,7 +43,7 @@ namespace fsp::sv
 
         // Producer thread: discover files and push them into the queue for later processing.
         std::thread producer([this, &scanning_finished]() {
-            directoryScanner.scan(root_path_, queue_);
+            directoryScanner.scan(root_path_, queue_, recursive_);
             scanning_finished = true;
             queue_.stop();
         });
@@ -151,7 +156,7 @@ namespace fsp::sv
     void FileProcessingManager::filesSearch()
     {
         std::thread producer([this]() {
-            directoryScanner.scan(root_path_, queue_);
+            directoryScanner.scan(root_path_, queue_, recursive_);
             queue_.stop();
         });
         producer.detach();

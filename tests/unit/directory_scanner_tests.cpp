@@ -33,7 +33,7 @@ TEST_CASE("DirectoryScanner scans recursively and returns only regular files", "
     fsp::cy::ThreadSafeQueue<fs::path> queue;
     fsp::ss::DirectoryScanner scanner;
 
-    scanner.scan(root, queue);
+    scanner.scan(root, queue, true);
 
     std::set<fs::path> found_files;
     while (!queue.empty())
@@ -58,7 +58,7 @@ TEST_CASE("DirectoryScanner ignores missing root path", "[directory][unit]")
     fsp::cy::ThreadSafeQueue<fs::path> queue;
     fsp::ss::DirectoryScanner scanner;
 
-    scanner.scan(missing_root, queue);
+    scanner.scan(missing_root, queue, true);
 
     REQUIRE(queue.empty());
 }
@@ -76,7 +76,7 @@ TEST_CASE("DirectoryScanner finds files in deeply nested folders", "[directory][
     fsp::cy::ThreadSafeQueue<fs::path> queue;
     fsp::ss::DirectoryScanner scanner;
 
-    scanner.scan(root, queue);
+    scanner.scan(root, queue, true);
 
     std::set<fs::path> found_files;
     while (!queue.empty())
@@ -104,7 +104,7 @@ TEST_CASE("DirectoryScanner ignores directories while keeping regular files", "[
     fsp::cy::ThreadSafeQueue<fs::path> queue;
     fsp::ss::DirectoryScanner scanner;
 
-    scanner.scan(root, queue);
+    scanner.scan(root, queue, true);
 
     std::set<fs::path> found_files;
     while (!queue.empty())
