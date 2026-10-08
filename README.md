@@ -72,6 +72,7 @@ cmake --build build --target fsp_unit_tests
 - `-r`, `--root` — root path to scan
 - `-t`, `--threads` — maximum number of worker threads
 - `-s`, `--stats`, `--statistics` — print runtime statistics
+- `-R`, `--recursive` — enable recursive directory scanning (flag, no value). Can be used together with `-s` or without it.
 - `-h`, `--help` — show usage information
 
 ### Examples
